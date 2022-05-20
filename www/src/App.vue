@@ -1,41 +1,80 @@
 <script>
+  import axios from "axios";
+
+  class Todo {
+    constructor(body, id) {
+      this.id = id;
+      this.body = body;
+      this.done = false;
+    }
+  }
+
   export default {
     name: "App",
 
     data() {
       return {
+        url: "http://localhost:5000/",
         todo_list: [],
-        todo_item: "",
+        temp_todo_item: "",
         index: 0,
         edit_index: null,
       };
     },
 
     methods: {
+      FetchTodos() {
+        axios
+          .get(this.url)
+          .then((response) => {
+            let fetched_data = response["data"];
+            this.index = fetched_data["id"];
+            this.todo_list = fetched_data;
+            for (let i = 0; i <= this.id; i++) {
+              console.log(this.todo_list[i.toString()]["body"]);
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      },
+
       AddTodo() {
-        if (this.todo_item != "" && this.edit_index == null) {
-          this.todo_list = [...this.todo_list, this.todo_item];
-          localStorage.setItem(this.todo_list, JSON.stringify(this.todo_list));
-          this.todo_item = "";
+        if (this.temp_todo_item != "" && this.edit_index == null) {
+          let new_todo = new Todo(this.id, this.temp_todo_item);
+          this.todo_list.push(new_todo);
+          this.id++;
+          this.temp_todo_item = "";
           this.$refs.input.focus();
         } else {
-          this.todo_list[this.edit_index] = this.todo_item;
-          this.todo_item = "";
+          this.todo_list[this.edit_index].body = this.temp_todo_item;
+          this.temp_todo_item = "";
           this.$refs.input.focus();
         }
-
         this.edit_index = null;
+        // Send info to API
+      },
+
+      DoneTodo(index) {
+        this.todo_list[index].done = !this.todo_list[index].done;
+        // Send info to API
       },
 
       EditTodo(index) {
-        this.todo_item = this.todo_list[index];
+        this.temp_todo_item = this.todo_list[index].body;
         this.edit_index = index;
         this.$refs.input.focus();
+        // Send info to API
       },
 
       DeleteTodo(index) {
         this.todo_list.splice(index, 1);
+        // Send info to API
       },
+    },
+
+    mounted() {
+      this.FetchTodos();
     },
   };
 </script>
@@ -50,7 +89,7 @@
           class="p-2 rounded-tl-3xl rounded-bl-3xl text-xl input bg-gray-200"
           type="text"
           placeholder="Buy 3 bottles of milk"
-          v-model="todo_item"
+          v-model="temp_todo_item"
           ref="input"
           @keyup.enter="AddTodo()"
         />
@@ -65,30 +104,64 @@
       <div class="flex flex-col justify-center w-full mt-24 mb-8 pl-2 pr-2">
         <h6 class="mb-8 text-center text-2xl">List:</h6>
 
-        <div
-          class="p-4 mb-6 rounded-3xl shadow-xl bg-amber-100"
-          v-for="(todo_item, index) in todo_list"
-          v-bind:key="index"
-        >
-          <div class="w-full mb-4 break-words">
-            {{ todo_item }}
-          </div>
-          <div class="flex justify-end w-full">
-            <Icon
-              class="w-4 h-4 p-2 rounded-full shadow-xl text-xl transition-all ease-linear duration-150 hover:cursor-pointer bg-green-600 text-white hover:bg-green-300 hover:text-black"
-              icon="check"
-              @click="DoneTodo(index)"
-            />
-            <Icon
-              class="w-4 h-4 p-2 ml-1 mr-1 rounded-full shadow-xl text-lg transition-all ease-linear duration-150 hover:cursor-pointer bg-yellow-600 text-white hover:bg-yellow-300 hover:text-black"
-              icon="pen"
-              @click="EditTodo(index)"
-            />
-            <Icon
-              class="w-4 h-4 p-2 rounded-full shadow-xl text-lg transition-all ease-linear duration-150 hover:cursor-pointer bg-red-600 text-white hover:bg-red-300 hover:text-black"
-              icon="trash"
-              @click="DeleteTodo(index)"
-            />
+        <div class="flex flex-col justify-center w-full">
+          <div
+            class="p-4 mb-6 rounded-3xl"
+            v-for="(todo, index) in todo_list"
+            v-bind:key="index"
+            :class="todo.done ? 'bg-white' : 'shadow-xl bg-amber-100'"
+          >
+            <div class="w-full mb-4 break-words" :class="todo.done ? 'line-through' : 'no-underline'">
+              <p>{{ todo.body }}</p>
+            </div>
+
+            <div class="flex justify-end w-full">
+              <button
+                class="flex justify-center items-center w-8 h-8 p-2 rounded-full shadow-xl transition-all ease-linear duration-150 hover:cursor-pointer bg-green-600 text-white hover:bg-green-300 hover:text-black"
+                @click="DoneTodo(index)"
+                v-if="todo.done === false"
+              >
+                <Icon class="text-xl" icon="check" />
+              </button>
+              <button
+                class="flex justify-center items-center w-8 h-8 p-2 rounded-full shadow-xl transition-all ease-linear duration-150 opacity-50 hover:opacity-100 hover:cursor-pointer bg-green-600 text-white hover:bg-green-300 hover:text-black"
+                @click="DoneTodo(index)"
+                v-else
+              >
+                <Icon class="text-xl" icon="check" />
+              </button>
+
+              <button
+                class="flex justify-center items-center w-8 h-8 p-2 ml-1 mr-1 rounded-full shadow-xl transition-all ease-linear duration-150 hover:cursor-pointer bg-yellow-600 text-white hover:bg-yellow-300 hover:text-black"
+                @click="EditTodo(index)"
+                v-if="todo.done === false"
+              >
+                <Icon class="text-lg" icon="pen" />
+              </button>
+              <button
+                class="flex justify-center items-center w-8 h-8 p-2 ml-1 mr-1 rounded-full shadow-xl bg-gray-400 text-white"
+                @click="EditTodo(index)"
+                disabled
+                v-else
+              >
+                <Icon class="text-lg" icon="pen" />
+              </button>
+
+              <button
+                class="flex justify-center items-center w-8 h-8 p-2 rounded-full shadow-xl transition-all ease-linear duration-150 hover:cursor-pointer bg-red-600 text-white hover:bg-red-300 hover:text-black"
+                @click="DeleteTodo(index)"
+                v-if="todo.done === false"
+              >
+                <Icon class="text-lg" icon="trash" />
+              </button>
+              <button
+                class="flex justify-center items-center w-8 h-8 p-2 rounded-full shadow-xl transition-all ease-linear duration-150 opacity-50 hover:opacity-100 hover:cursor-pointer bg-red-600 text-white hover:bg-red-300 hover:text-black"
+                @click="DeleteTodo(index)"
+                v-else
+              >
+                <Icon class="text-lg" icon="trash" />
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -97,10 +170,6 @@
 </template>
 
 <style>
-  ::selection {
-    @apply bg-gray-300 text-black;
-  }
-
   .app {
     max-width: 480px;
   }
