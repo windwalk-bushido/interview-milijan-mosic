@@ -1,13 +1,6 @@
 <script>
   import axios from "axios";
-
-  class Todo {
-    constructor(body, id) {
-      this.id = id;
-      this.body = body;
-      this.done = false;
-    }
-  }
+  import Todo from "./class";
 
   export default {
     name: "App",
@@ -27,14 +20,21 @@
         axios
           .get(this.url)
           .then((response) => {
-            let fetched_data = response["data"];
-            this.index = fetched_data["id"];
-            this.todo_list = fetched_data;
-            for (let i = 0; i <= this.id; i++) {
-              console.log(this.todo_list[i.toString()]["body"]);
-            }
+            console.log(typeof response["data"]);
+            this.todo_list = response["data"];
+            console.log(this.todo_list);
           })
           .catch((error) => {
+            //alert(error);
+            console.log(error);
+          });
+        axios
+          .get(this.url + "/index")
+          .then((response) => {
+            this.index = response["data"];
+          })
+          .catch((error) => {
+            //alert(error);
             console.log(error);
           });
       },
@@ -42,16 +42,17 @@
       AddTodo() {
         if (this.temp_todo_item != "" && this.edit_index == null) {
           let new_todo = new Todo(this.id, this.temp_todo_item);
+          this.index++;
           this.todo_list.push(new_todo);
-          this.id++;
-          this.temp_todo_item = "";
-          this.$refs.input.focus();
-        } else {
-          this.todo_list[this.edit_index].body = this.temp_todo_item;
           this.temp_todo_item = "";
           this.$refs.input.focus();
         }
-        this.edit_index = null;
+        if (this.temp_todo_item != "" && this.edit_index != null) {
+          this.todo_list[this.edit_index].body = this.temp_todo_item;
+          this.temp_todo_item = "";
+          this.$refs.input.focus();
+          this.edit_index = null;
+        }
         // Send info to API
       },
 
@@ -64,7 +65,6 @@
         this.temp_todo_item = this.todo_list[index].body;
         this.edit_index = index;
         this.$refs.input.focus();
-        // Send info to API
       },
 
       DeleteTodo(index) {

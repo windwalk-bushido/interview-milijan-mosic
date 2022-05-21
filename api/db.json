@@ -1,26 +1,26 @@
 {
-  "id": 4,
+  "index": 4,
 
   "0": {
-    "id": 0,
+    "index": 0,
     "body": "Lorem ipsummmmm",
     "done": false
   },
 
   "1": {
-    "id": 1,
+    "index": 1,
     "body": "Buy three bottles of milk",
     "done": true
   },
 
   "2": {
-    "id": 2,
+    "index": 2,
     "body": "Pack up and prepare for school",
     "done": false
   },
 
   "3": {
-    "id": 3,
+    "index": 3,
     "body": "Make a meal",
     "done": true
   }
