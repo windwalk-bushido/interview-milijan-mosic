@@ -1,8 +1,8 @@
 class Todo {
-  constructor(index, body) {
+  constructor(index, body, done) {
     this.index = index;
     this.body = body;
-    this.done = false;
+    this.done = done;
   }
 }
 

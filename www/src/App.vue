@@ -37,17 +37,16 @@
 
       AddTodo() {
         if (this.temp_todo_item != "" && this.edit_index == null) {
-          let todo = new Todo(this.index, this.temp_todo_item);
+          let todo = new Todo(this.index, this.temp_todo_item, false);
           this.index++;
           this.todo_list.push(todo);
-          this.temp_todo_item = "";
-          this.$refs.input.focus();
+
           axios
             .put(this.url + "/index", {
               index: this.index,
             })
             .then((response) => {
-              console.log(response);
+              console.log(response["data"]);
             })
             .catch((error) => {
               console.log(error);
@@ -60,9 +59,23 @@
             .catch((error) => {
               console.log(error);
             });
+
+          this.temp_todo_item = "";
+          this.$refs.input.focus();
         }
         if (this.temp_todo_item != "" && this.edit_index != null) {
           this.todo_list[this.edit_index].body = this.temp_todo_item;
+
+          let todo = new Todo(this.edit_index, this.temp_todo_item, this.todo_list[this.edit_index].done);
+          axios
+            .put(this.url + "/todos", { todo })
+            .then((response) => {
+              console.log(response["data"]);
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+
           this.temp_todo_item = "";
           this.$refs.input.focus();
           this.edit_index = null;
@@ -71,7 +84,20 @@
 
       DoneTodo(index) {
         this.todo_list[index].done = !this.todo_list[index].done;
-        // Send info to API
+
+        let todo = new Todo(
+          this.todo_list[index].index,
+          this.todo_list[index].body,
+          this.todo_list[index].done
+        );
+        axios
+          .put(this.url + "/todos", { todo })
+          .then((response) => {
+            console.log(response["data"]);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
       },
 
       EditTodo(index) {
@@ -81,13 +107,27 @@
       },
 
       DeleteTodo(index) {
+        let todo = new Todo(
+          this.todo_list[index].index,
+          this.todo_list[index].body,
+          this.todo_list[index].done
+        );
+        axios
+          .delete(this.url + "/todos", { todo })
+          .then((response) => {
+            console.log(response["data"]);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+
         this.todo_list.splice(index, 1);
-        // Send info to API
       },
     },
 
     mounted() {
       //this.FetchTodos();
+      console.log(this.index);
     },
   };
 </script>
