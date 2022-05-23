@@ -20,7 +20,10 @@
         axios
           .get(this.url + "/todos")
           .then((response) => {
-            this.todo_list = response["data"];
+            let arrived_data = response["data"];
+            for (let i in arrived_data) {
+              this.todo_list.push(arrived_data[i]);
+            }
           })
           .catch((error) => {
             console.log(error);
@@ -41,18 +44,26 @@
           this.index++;
           this.todo_list.push(todo);
 
-          axios
-            .put(this.url + "/index", {
+          axios({
+            method: "put",
+            url: this.url + "/index",
+            data: {
               index: this.index,
-            })
+            },
+          })
             .then((response) => {
               console.log(response["data"]);
             })
             .catch((error) => {
               console.log(error);
             });
-          axios
-            .post(this.url + "/todos", { todo })
+          axios({
+            method: "post",
+            url: this.url + "/todos",
+            data: {
+              todo,
+            },
+          })
             .then((response) => {
               console.log(response["data"]);
             })
@@ -66,9 +77,19 @@
         if (this.temp_todo_item != "" && this.edit_index != null) {
           this.todo_list[this.edit_index].body = this.temp_todo_item;
 
-          let todo = new Todo(this.edit_index, this.temp_todo_item, this.todo_list[this.edit_index].done);
-          axios
-            .put(this.url + "/todos", { todo })
+          let todo = new Todo(
+            this.todo_list[this.edit_index].index,
+            this.todo_list[this.edit_index].body,
+            this.todo_list[this.edit_index].done
+          );
+          axios({
+            method: "put",
+            url: this.url + "/todos",
+            data: {
+              todo,
+              mode: "put",
+            },
+          })
             .then((response) => {
               console.log(response["data"]);
             })
@@ -90,8 +111,15 @@
           this.todo_list[index].body,
           this.todo_list[index].done
         );
-        axios
-          .put(this.url + "/todos", { todo })
+
+        axios({
+          method: "put",
+          url: this.url + "/todos",
+          data: {
+            todo,
+            mode: "put",
+          },
+        })
           .then((response) => {
             console.log(response["data"]);
           })
@@ -107,13 +135,16 @@
       },
 
       DeleteTodo(index) {
-        let todo = new Todo(
-          this.todo_list[index].index,
-          this.todo_list[index].body,
-          this.todo_list[index].done
-        );
-        axios
-          .delete(this.url + "/todos", { todo })
+        let number = this.todo_list[index].index;
+
+        axios({
+          method: "put",
+          url: this.url + "/todos",
+          data: {
+            target: number,
+            mode: "delete",
+          },
+        })
           .then((response) => {
             console.log(response["data"]);
           })
@@ -126,8 +157,7 @@
     },
 
     mounted() {
-      //this.FetchTodos();
-      console.log(this.index);
+      this.FetchTodos();
     },
   };
 </script>
