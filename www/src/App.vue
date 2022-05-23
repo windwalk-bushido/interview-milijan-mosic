@@ -7,7 +7,7 @@
 
     data() {
       return {
-        url: "http://localhost:5000/",
+        url: "http://localhost:5000",
         todo_list: [],
         temp_todo_item: "",
         index: 0,
@@ -18,14 +18,11 @@
     methods: {
       FetchTodos() {
         axios
-          .get(this.url)
+          .get(this.url + "/todos")
           .then((response) => {
-            console.log(typeof response["data"]);
             this.todo_list = response["data"];
-            console.log(this.todo_list);
           })
           .catch((error) => {
-            //alert(error);
             console.log(error);
           });
         axios
@@ -34,18 +31,35 @@
             this.index = response["data"];
           })
           .catch((error) => {
-            //alert(error);
             console.log(error);
           });
       },
 
       AddTodo() {
         if (this.temp_todo_item != "" && this.edit_index == null) {
-          let new_todo = new Todo(this.id, this.temp_todo_item);
+          let todo = new Todo(this.index, this.temp_todo_item);
           this.index++;
-          this.todo_list.push(new_todo);
+          this.todo_list.push(todo);
           this.temp_todo_item = "";
           this.$refs.input.focus();
+          axios
+            .put(this.url + "/index", {
+              index: this.index,
+            })
+            .then((response) => {
+              console.log(response);
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+          axios
+            .post(this.url + "/todos", { todo })
+            .then((response) => {
+              console.log(response["data"]);
+            })
+            .catch((error) => {
+              console.log(error);
+            });
         }
         if (this.temp_todo_item != "" && this.edit_index != null) {
           this.todo_list[this.edit_index].body = this.temp_todo_item;
@@ -53,7 +67,6 @@
           this.$refs.input.focus();
           this.edit_index = null;
         }
-        // Send info to API
       },
 
       DoneTodo(index) {
@@ -74,7 +87,7 @@
     },
 
     mounted() {
-      this.FetchTodos();
+      //this.FetchTodos();
     },
   };
 </script>

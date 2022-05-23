@@ -1,27 +1,23 @@
 {
-  "index": 4,
-
   "0": {
-    "index": 0,
     "body": "Lorem ipsummmmm",
-    "done": false
+    "done": false,
+    "index": 0
   },
-
   "1": {
-    "index": 1,
     "body": "Buy three bottles of milk",
-    "done": true
+    "done": true,
+    "index": 1
   },
-
   "2": {
-    "index": 2,
     "body": "Pack up and prepare for school",
-    "done": false
+    "done": false,
+    "index": 2
   },
-
   "3": {
-    "index": 3,
     "body": "Make a meal",
-    "done": true
-  }
+    "done": true,
+    "index": 3
+  },
+  "index": 15
 }
