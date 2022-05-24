@@ -1,7 +1,11 @@
-**Note:** Commands tested on Linux
+**Note:** Commands tested on (Arch) Linux
+
+Required: git, docker, docker-compose
 
 ```
 git clone https://github.com/windwalk-bushido/interview-milijan-mosic.git
+cd interview-milijan-mosic/
+sudo docker-compose up --build
 ```
 
 Available on: http://127.0.0.1:8080
@@ -15,6 +19,7 @@ Available on: http://127.0.0.1:8080
 - Python
 - Flask
 - Nginx
+- Gunicorn
 - Docker
 
 # Task description:
