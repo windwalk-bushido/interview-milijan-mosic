@@ -70,9 +70,6 @@
             .catch((error) => {
               console.log(error);
             });
-
-          this.temp_todo_item = "";
-          this.$refs.input.focus();
         }
         if (this.temp_todo_item != "" && this.edit_index != null) {
           this.todo_list[this.edit_index].body = this.temp_todo_item;
@@ -96,11 +93,11 @@
             .catch((error) => {
               console.log(error);
             });
-
-          this.temp_todo_item = "";
-          this.$refs.input.focus();
-          this.edit_index = null;
         }
+
+        this.temp_todo_item = "";
+        this.$refs.input.focus();
+        this.edit_index = null;
       },
 
       DoneTodo(index) {
@@ -111,7 +108,6 @@
           this.todo_list[index].body,
           this.todo_list[index].done
         );
-
         axios({
           method: "put",
           url: this.url + "/todos",
@@ -136,7 +132,6 @@
 
       DeleteTodo(index) {
         let number = this.todo_list[index].index;
-
         axios({
           method: "put",
           url: this.url + "/todos",
@@ -206,6 +201,15 @@
               >
                 <Icon class="text-xl" icon="check" />
               </button>
+              <!--
+              <button
+                class="flex justify-center items-center w-8 h-8 p-2 rounded-full shadow-xl bg-gray-400 text-white"
+                disabled
+                v-else-if="edit_index === todo_list[index]"
+              >
+                <Icon class="text-lg" icon="check" />
+              </button>
+              -->
               <button
                 class="flex justify-center items-center w-8 h-8 p-2 rounded-full shadow-xl transition-all ease-linear duration-150 opacity-50 hover:opacity-100 hover:cursor-pointer bg-green-600 text-white hover:bg-green-300 hover:text-black"
                 @click="DoneTodo(index)"
@@ -223,7 +227,6 @@
               </button>
               <button
                 class="flex justify-center items-center w-8 h-8 p-2 ml-1 mr-1 rounded-full shadow-xl bg-gray-400 text-white"
-                @click="EditTodo(index)"
                 disabled
                 v-else
               >
@@ -237,6 +240,15 @@
               >
                 <Icon class="text-lg" icon="trash" />
               </button>
+              <!--
+              <button
+                class="flex justify-center items-center w-8 h-8 p-2 rounded-full shadow-xl bg-gray-400 text-white"
+                disabled
+                v-else-if="this.temp_todo_item == todo_list[index.toString()].body"
+              >
+                <Icon class="text-lg" icon="trash" />
+              </button>
+              -->
               <button
                 class="flex justify-center items-center w-8 h-8 p-2 rounded-full shadow-xl transition-all ease-linear duration-150 opacity-50 hover:opacity-100 hover:cursor-pointer bg-red-600 text-white hover:bg-red-300 hover:text-black"
                 @click="DeleteTodo(index)"

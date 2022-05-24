@@ -4,11 +4,11 @@
 git clone https://github.com/windwalk-bushido/interview-milijan-mosic.git
 ```
 
-Available on: http://127.0.0.1:3000
+Available on: http://127.0.0.1:8080
 
 ## Tech used
 
-- Vue
+- Vue 3
 - JavaScript
 - Tailwind CSS
 - Axios
