@@ -1,8 +1,14 @@
+# Todo App
+
 **Note:** Commands tested on (Arch) Linux
 
-Required: git, docker, docker-compose
+Requirements:
 
-```
+- git
+- docker
+- docker-compose
+
+```sh
 git clone https://github.com/windwalk-bushido/interview-milijan-mosic.git
 cd interview-milijan-mosic/
 sudo docker-compose up --build
@@ -22,7 +28,7 @@ Available on: http://127.0.0.1:8080
 - Gunicorn
 - Docker
 
-# Task description:
+### Task description:
 
 The purpose of this series of tasks is to determine the ability to adapt to the unknown, apply known concepts, observing the candidate’s critical thinking and planning capabilities.
 
