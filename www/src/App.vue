@@ -10,6 +10,7 @@
   const index = ref(-1);
   const edit_index = ref(-1);
   const delete_index = ref(-1);
+  const disable_control = ref(false);
 
   async function FetchTodos() {
     axios
@@ -66,6 +67,8 @@
           alert(error);
         });
     }
+
+    // EditTodo()
     if (temp_todo_item.value !== "" && edit_index.value !== -1) {
       todo_list.value[edit_index.value].body = temp_todo_item.value;
 
@@ -94,6 +97,7 @@
     const input = document.getElementById("input") as HTMLFormElement;
     input.focus();
     edit_index.value = -1;
+    disable_control.value = false;
   }
 
   async function DoneTodo(index: number) {
@@ -200,32 +204,28 @@
 
             <footer class="flex justify-end w-full">
               <button
-                class="flex justify-center items-center w-8 h-8 p-2 rounded-full shadow-xl transition-all ease-linear duration-100 hover:cursor-pointer bg-green-600 text-white hover:bg-green-300 hover:text-black"
+                class="flex justify-center items-center w-8 h-8 p-2 rounded-full shadow-xl transition-all ease-linear duration-100 bg-green-600 text-white hover:bg-green-300 hover:text-black"
                 @click="DoneTodo(index)"
-                v-if="todo.done === false"
+                v-if="disable_control === false"
               >
                 <Icon class="text-xl" icon="check" />
               </button>
-              <!--
               <button
                 class="flex justify-center items-center w-8 h-8 p-2 rounded-full shadow-xl bg-gray-400 text-white"
                 disabled
-                v-else-if="edit_index === todo_list[index]"
+                v-else-if="disable_control"
               >
                 <Icon class="text-lg" icon="check" />
               </button>
-              -->
-              <button
-                class="flex justify-center items-center w-8 h-8 p-2 rounded-full shadow-xl transition-all ease-linear duration-100 opacity-50 hover:opacity-100 hover:cursor-pointer bg-green-600 text-white hover:bg-green-300 hover:text-black"
-                @click="DoneTodo(index)"
-                v-else
-              >
-                <Icon class="text-xl" icon="check" />
-              </button>
 
               <button
-                class="flex justify-center items-center w-8 h-8 p-2 ml-1 mr-1 rounded-full shadow-xl transition-all ease-linear duration-100 hover:cursor-pointer bg-yellow-600 text-white hover:bg-yellow-300 hover:text-black"
-                @click="EditTodo(index)"
+                class="flex justify-center items-center w-8 h-8 p-2 ml-1 mr-1 rounded-full shadow-xl transition-all ease-linear duration-100 bg-yellow-600 text-white hover:bg-yellow-300 hover:text-black"
+                @click="
+                  () => {
+                    EditTodo(index);
+                    disable_control = true;
+                  }
+                "
                 v-if="todo.done === false"
               >
                 <Icon class="text-lg" icon="pen" />
@@ -239,28 +239,14 @@
               </button>
 
               <button
-                class="flex justify-center items-center w-8 h-8 p-2 rounded-full shadow-xl transition-all ease-linear duration-100 hover:cursor-pointer bg-red-600 text-white hover:bg-red-300 hover:text-black"
-                @click="
-                  () => {
-                    delete_index = index;
-                    HandleModal(1);
-                  }
-                "
+                class="flex justify-center items-center w-8 h-8 p-2 rounded-full shadow-xl bg-gray-400 text-white"
+                disabled
                 v-if="todo.done === false"
               >
                 <Icon class="text-lg" icon="trash" />
               </button>
-              <!--
               <button
-                class="flex justify-center items-center w-8 h-8 p-2 rounded-full shadow-xl bg-gray-400 text-white"
-                disabled
-                v-else-if="temp_todo_item.value === todo_list.value[index.value.toString()].body"
-              >
-                <Icon class="text-lg" icon="trash" />
-              </button>
-              -->
-              <button
-                class="flex justify-center items-center w-8 h-8 p-2 rounded-full shadow-xl transition-all ease-linear duration-100 opacity-50 hover:opacity-100 hover:cursor-pointer bg-red-600 text-white hover:bg-red-300 hover:text-black"
+                class="flex justify-center items-center w-8 h-8 p-2 rounded-full shadow-xl transition-all ease-linear duration-100 bg-red-600 text-white hover:bg-red-300 hover:text-black"
                 @click="
                   () => {
                     delete_index = index;
@@ -286,13 +272,13 @@
         <p class="text-2xl mb-8">Are you sure?</p>
         <div>
           <button
-            class="mr-2 p-3 rounded-full hover:shadow-xl transition-all ease-linear duration-100 hover:opacity-100 hover:cursor-pointer bg-white text-black hover:bg-gray-300 hover:text-black"
+            class="mr-2 p-3 rounded-full hover:shadow-xl transition-all ease-linear duration-100 hover:opacity-100 bg-white text-black hover:bg-gray-300 hover:text-black"
             @click="HandleModal(0)"
           >
             Cancel
           </button>
           <button
-            class="ml-2 p-3 text-bold rounded-full shadow-xl transition-all ease-linear duration-100 hover:opacity-100 hover:cursor-pointer bg-red-600 text-white hover:bg-red-300 hover:text-black"
+            class="ml-2 p-3 text-bold rounded-full shadow-xl transition-all ease-linear duration-100 hover:opacity-100 bg-red-600 text-white hover:bg-red-300 hover:text-black"
             @click="
               () => {
                 DeleteTodo();
