@@ -20,7 +20,7 @@
         }
       })
       .catch((error) => {
-        console.log(error);
+        alert(error);
       });
     axios
       .get(url.value + "/index")
@@ -28,7 +28,7 @@
         index.value = response["data"];
       })
       .catch((error) => {
-        console.log(error);
+        alert(error);
       });
   }
 
@@ -49,7 +49,7 @@
           console.log(response["data"]);
         })
         .catch((error) => {
-          console.log(error);
+          alert(error);
         });
       axios({
         method: "post",
@@ -62,7 +62,7 @@
           console.log(response["data"]);
         })
         .catch((error) => {
-          console.log(error);
+          alert(error);
         });
     }
     if (temp_todo_item.value !== "" && edit_index.value !== -1) {
@@ -85,7 +85,7 @@
           console.log(response["data"]);
         })
         .catch((error) => {
-          console.log(error);
+          alert(error);
         });
     }
 
@@ -115,7 +115,7 @@
         console.log(response["data"]);
       })
       .catch((error) => {
-        console.log(error);
+        alert(error);
       });
   }
 
@@ -140,7 +140,7 @@
         console.log(response["data"]);
       })
       .catch((error) => {
-        console.log(error);
+        alert(error);
       });
 
     todo_list.value.splice(index, 1);
