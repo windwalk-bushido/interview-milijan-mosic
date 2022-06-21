@@ -9,6 +9,7 @@
   const temp_todo_item = ref("");
   const index = ref(-1);
   const edit_index = ref(-1);
+  const delete_index = ref(-1);
 
   async function FetchTodos() {
     axios
@@ -126,8 +127,8 @@
     input.focus();
   }
 
-  async function DeleteTodo(index: number) {
-    const number = todo_list.value[index].index;
+  async function DeleteTodo() {
+    const number = todo_list.value[delete_index.value].index;
     axios({
       method: "put",
       url: url.value + "/todos",
@@ -143,7 +144,17 @@
         alert(error);
       });
 
-    todo_list.value.splice(index, 1);
+    todo_list.value.splice(delete_index.value, 1);
+    delete_index.value = -1;
+  }
+
+  function HandleModal(command: number) {
+    const modal = document.getElementById("modal") as HTMLElement;
+    if (command === 1) {
+      modal.classList.remove("hidden");
+    } else if (command === 0) {
+      modal.classList.add("hidden");
+    }
   }
 
   onMounted(() => {
@@ -152,8 +163,8 @@
 </script>
 
 <template>
-  <div class="flex flex-col justify-center items-center w-full">
-    <main class="app flex flex-col justify-center w-full">
+  <div class="flex flex-col justify-start items-center w-screen h-screen">
+    <main class="app flex flex-col justify-center w-full mt-4">
       <h1 class="mt-2 text-center text-4xl">Todo App</h1>
 
       <div class="flex justify-center items-center w-full mt-12">
@@ -166,7 +177,7 @@
           @keyup.enter="AddTodo()"
         />
         <button
-          class="flex justify-center items-center w-12 h-12 p-2 rounded-tr-3xl rounded-br-3xl text-2xl transition-all duration-150 ease-linear bg-blue-700 text-white hover:bg-blue-300 hover:text-black"
+          class="flex justify-center items-center w-12 h-12 p-2 rounded-tr-3xl rounded-br-3xl text-2xl transition-all duration-100 ease-linear bg-blue-700 text-white hover:bg-blue-300 hover:text-black"
           @click="AddTodo()"
         >
           <Icon icon="plus" />
@@ -189,7 +200,7 @@
 
             <footer class="flex justify-end w-full">
               <button
-                class="flex justify-center items-center w-8 h-8 p-2 rounded-full shadow-xl transition-all ease-linear duration-150 hover:cursor-pointer bg-green-600 text-white hover:bg-green-300 hover:text-black"
+                class="flex justify-center items-center w-8 h-8 p-2 rounded-full shadow-xl transition-all ease-linear duration-100 hover:cursor-pointer bg-green-600 text-white hover:bg-green-300 hover:text-black"
                 @click="DoneTodo(index)"
                 v-if="todo.done === false"
               >
@@ -205,7 +216,7 @@
               </button>
               -->
               <button
-                class="flex justify-center items-center w-8 h-8 p-2 rounded-full shadow-xl transition-all ease-linear duration-150 opacity-50 hover:opacity-100 hover:cursor-pointer bg-green-600 text-white hover:bg-green-300 hover:text-black"
+                class="flex justify-center items-center w-8 h-8 p-2 rounded-full shadow-xl transition-all ease-linear duration-100 opacity-50 hover:opacity-100 hover:cursor-pointer bg-green-600 text-white hover:bg-green-300 hover:text-black"
                 @click="DoneTodo(index)"
                 v-else
               >
@@ -213,7 +224,7 @@
               </button>
 
               <button
-                class="flex justify-center items-center w-8 h-8 p-2 ml-1 mr-1 rounded-full shadow-xl transition-all ease-linear duration-150 hover:cursor-pointer bg-yellow-600 text-white hover:bg-yellow-300 hover:text-black"
+                class="flex justify-center items-center w-8 h-8 p-2 ml-1 mr-1 rounded-full shadow-xl transition-all ease-linear duration-100 hover:cursor-pointer bg-yellow-600 text-white hover:bg-yellow-300 hover:text-black"
                 @click="EditTodo(index)"
                 v-if="todo.done === false"
               >
@@ -228,8 +239,13 @@
               </button>
 
               <button
-                class="flex justify-center items-center w-8 h-8 p-2 rounded-full shadow-xl transition-all ease-linear duration-150 hover:cursor-pointer bg-red-600 text-white hover:bg-red-300 hover:text-black"
-                @click="DeleteTodo(index)"
+                class="flex justify-center items-center w-8 h-8 p-2 rounded-full shadow-xl transition-all ease-linear duration-100 hover:cursor-pointer bg-red-600 text-white hover:bg-red-300 hover:text-black"
+                @click="
+                  () => {
+                    delete_index = index;
+                    HandleModal(1);
+                  }
+                "
                 v-if="todo.done === false"
               >
                 <Icon class="text-lg" icon="trash" />
@@ -244,8 +260,13 @@
               </button>
               -->
               <button
-                class="flex justify-center items-center w-8 h-8 p-2 rounded-full shadow-xl transition-all ease-linear duration-150 opacity-50 hover:opacity-100 hover:cursor-pointer bg-red-600 text-white hover:bg-red-300 hover:text-black"
-                @click="DeleteTodo(index)"
+                class="flex justify-center items-center w-8 h-8 p-2 rounded-full shadow-xl transition-all ease-linear duration-100 opacity-50 hover:opacity-100 hover:cursor-pointer bg-red-600 text-white hover:bg-red-300 hover:text-black"
+                @click="
+                  () => {
+                    delete_index = index;
+                    HandleModal(1);
+                  }
+                "
                 v-else
               >
                 <Icon class="text-lg" icon="trash" />
@@ -255,6 +276,35 @@
         </div>
       </div>
     </main>
+
+    <div
+      class="w-screen h-screen justify-center items-center z-10 absolute my-padding-60"
+      id="modal"
+      :class="delete_index !== -1 ? 'flex' : 'hidden'"
+    >
+      <div class="flex flex-col justify-center items-center p-8 rounded-3xl shadow-xl bg-white">
+        <p class="text-2xl mb-8">Are you sure?</p>
+        <div>
+          <button
+            class="mr-2 p-3 rounded-full hover:shadow-xl transition-all ease-linear duration-100 hover:opacity-100 hover:cursor-pointer bg-white text-black hover:bg-gray-300 hover:text-black"
+            @click="HandleModal(0)"
+          >
+            Cancel
+          </button>
+          <button
+            class="ml-2 p-3 text-bold rounded-full shadow-xl transition-all ease-linear duration-100 hover:opacity-100 hover:cursor-pointer bg-red-600 text-white hover:bg-red-300 hover:text-black"
+            @click="
+              () => {
+                DeleteTodo();
+                HandleModal(0);
+              }
+            "
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -266,5 +316,9 @@
   .input {
     min-width: 240px;
     max-width: 440px;
+  }
+
+  .my-padding-60 {
+    background: rgba(0, 0, 0, 0.6);
   }
 </style>
