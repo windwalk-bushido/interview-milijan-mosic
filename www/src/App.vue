@@ -168,6 +168,13 @@
 
 <template>
   <div class="flex flex-col justify-start items-center w-screen h-screen">
+    <div class="flex justify-center w-full pt-1 pb-1 bg-green-600 text-white" v-if="edit_index === -1">
+      <p class="text-lg">Ready for using</p>
+    </div>
+    <div class="flex justify-center w-full pt-1 pb-1 bg-yellow-500 text-black" v-else>
+      <p class="text-lg">App in editing mode!</p>
+    </div>
+
     <main class="app flex flex-col justify-center w-full mt-4">
       <h1 class="mt-2 text-center text-4xl">Todo App</h1>
 
