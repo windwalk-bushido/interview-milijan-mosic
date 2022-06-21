@@ -4,7 +4,6 @@
 FROM node:18-alpine as develop-stage
 WORKDIR /www/container
 COPY . /www/container
-RUN rm -r node_modules
 RUN npm install
 
 
