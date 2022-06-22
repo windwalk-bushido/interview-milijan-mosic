@@ -4,7 +4,7 @@
 
   const router = useRouter();
 
-  let is_user_logged_in = ref(true);
+  let is_user_logged_in = ref(false);
 
   function NavBarLoggedIn() {
     is_user_logged_in.value = true;
@@ -26,7 +26,7 @@
 <template>
   <header class="">
     <nav
-      class="fixed flex justify-end items-center w-full bg-white text-black p-4"
+      class="fixed flex justify-end items-center w-full shadow-md bg-white text-black p-4"
       v-if="is_user_logged_in === false"
     >
       <RouterLink
@@ -36,7 +36,10 @@
       >
     </nav>
 
-    <nav class="fixed flex justify-end items-center w-full bg-white text-black p-4" v-if="is_user_logged_in">
+    <nav
+      class="fixed flex justify-end items-center w-full shadow-md bg-white text-black p-4"
+      v-if="is_user_logged_in"
+    >
       <RouterLink
         class="pl-4 pr-4 pt-2 pb-2 hover:rounded-xl hover:shadow-md my-animation bg-white hover:bg-yellow-100 text-black"
         to="/user/dashboard"
