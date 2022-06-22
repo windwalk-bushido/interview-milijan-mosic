@@ -5,3 +5,7 @@
 ::selection {
   @apply bg-gray-300 text-black;
 }
+
+.my-animation {
+  @apply transition-all ease-linear duration-100;
+}

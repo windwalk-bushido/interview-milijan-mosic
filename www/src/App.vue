@@ -25,25 +25,49 @@
 
 <template>
   <header class="">
-    <nav class="" v-if="is_user_logged_in === false">
-      <RouterLink to="/">Home</RouterLink>
+    <nav
+      class="fixed flex justify-end items-center w-full bg-white text-black p-4"
+      v-if="is_user_logged_in === false"
+    >
+      <RouterLink
+        class="pl-4 pr-4 pt-2 pb-2 hover:rounded-xl hover:shadow-md my-animation bg-white hover:bg-yellow-100 text-black"
+        to="/"
+        >Home</RouterLink
+      >
     </nav>
 
-    <nav class="" v-if="is_user_logged_in">
-      <RouterLink to="/user/dashboard">Dashboard</RouterLink>
-      <RouterLink to="/user/settings">Settings</RouterLink>
-      <button @click="LogoutUser()">Logout</button>
+    <nav class="fixed flex justify-end items-center w-full bg-white text-black p-4" v-if="is_user_logged_in">
+      <RouterLink
+        class="pl-4 pr-4 pt-2 pb-2 hover:rounded-xl hover:shadow-md my-animation bg-white hover:bg-yellow-100 text-black"
+        to="/user/dashboard"
+        >Dashboard</RouterLink
+      >
+      <RouterLink
+        class="mr-4 ml-4 pl-4 pr-4 pt-2 pb-2 hover:rounded-xl hover:shadow-md my-animation bg-white hover:bg-yellow-100 text-black"
+        to="/user/settings"
+        >Settings</RouterLink
+      >
+      <button
+        class="pl-4 pr-4 pt-2 pb-2 rounded-xl shadow-lg hover:shadow-md my-animation bg-yellow-400 hover:bg-yellow-100 text-black"
+        @click="LogoutUser()"
+      >
+        Logout
+      </button>
     </nav>
   </header>
 
-  <main class="flex flex-col justify-start items-center w-screen h-screen">
-    <RouterView @NavBarLoggedIn="NavBarLoggedIn" />
+  <main class="flex flex-col justify-start items-center w-screen h-screen bg-gray-100">
+    <RouterView class="mt-20" @NavBarLoggedIn="NavBarLoggedIn" />
   </main>
 
-  <footer class="">
-    <div class="">
-      <p>By:</p>
-      <a href="https://github.com/windwalk-bushido">Windwalk</a>
+  <footer class="flex justify-between items-center p-4">
+    <div class="flex">
+      <p class="mr-2">By:</p>
+      <a
+        class="underline hover:decoration-double my-animation text-blue-500 hover:text-blue-800"
+        href="https://github.com/windwalk-bushido"
+        >Windwalk</a
+      >
     </div>
     <p>2022.</p>
   </footer>

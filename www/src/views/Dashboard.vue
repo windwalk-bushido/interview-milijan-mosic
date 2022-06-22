@@ -210,7 +210,7 @@
 
           <footer class="flex justify-end w-full">
             <button
-              class="flex justify-center items-center w-8 h-8 p-2 rounded-full shadow-xl transition-all ease-linear duration-100 bg-green-600 text-white hover:bg-green-300 hover:text-black"
+              class="flex justify-center items-center w-8 h-8 p-2 rounded-full shadow-xl my-animation bg-green-600 text-white hover:bg-green-300 hover:text-black"
               @click="DoneTodo(index)"
               v-if="disable_control === false"
             >
@@ -225,7 +225,7 @@
             </button>
 
             <button
-              class="flex justify-center items-center w-8 h-8 p-2 ml-1 mr-1 rounded-full shadow-xl transition-all ease-linear duration-100 bg-yellow-600 text-white hover:bg-yellow-300 hover:text-black"
+              class="flex justify-center items-center w-8 h-8 p-2 ml-1 mr-1 rounded-full shadow-xl my-animation bg-yellow-600 text-white hover:bg-yellow-300 hover:text-black"
               @click="
                 () => {
                   EditTodo(index);
@@ -252,7 +252,7 @@
               <Icon class="text-lg" icon="trash" />
             </button>
             <button
-              class="flex justify-center items-center w-8 h-8 p-2 rounded-full shadow-xl transition-all ease-linear duration-100 bg-red-600 text-white hover:bg-red-300 hover:text-black"
+              class="flex justify-center items-center w-8 h-8 p-2 rounded-full shadow-xl my-animation bg-red-600 text-white hover:bg-red-300 hover:text-black"
               @click="
                 () => {
                   delete_index = index;
@@ -278,13 +278,13 @@
       <p class="text-2xl mb-8">Are you sure?</p>
       <div>
         <button
-          class="mr-2 p-3 rounded-full hover:shadow-xl transition-all ease-linear duration-100 hover:opacity-100 bg-white text-black hover:bg-gray-300 hover:text-black"
+          class="mr-2 p-3 rounded-full hover:shadow-xl my-animation hover:opacity-100 bg-white text-black hover:bg-gray-300 hover:text-black"
           @click="HandleModal(0)"
         >
           Cancel
         </button>
         <button
-          class="ml-2 p-3 text-bold rounded-full shadow-xl transition-all ease-linear duration-100 hover:opacity-100 bg-red-600 text-white hover:bg-red-300 hover:text-black"
+          class="ml-2 p-3 text-bold rounded-full shadow-xl my-animation hover:opacity-100 bg-red-600 text-white hover:bg-red-300 hover:text-black"
           @click="
             () => {
               DeleteTodo();
