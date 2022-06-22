@@ -2,6 +2,8 @@
 
 **Note:** Commands tested on (Arch) Linux
 
+## Local deployment:
+
 Requirements:
 
 - git
@@ -16,7 +18,11 @@ sudo docker-compose up --build
 
 Available on: http://127.0.0.1:8080
 
-## Tech used
+## Production deployment:
+
+Coming soon...
+
+### Tech used:
 
 - Vue 3
 - JavaScript
@@ -47,3 +53,7 @@ The purpose of this series of tasks is to determine the ability to adapt to the 
 7. Write “docker-compose.yml” that will start both frontend and backend with “docker-compose up --build”.
 
 8. Allow project checking at http://127.0.0.1:8080
+
+### What I've added:
+
+Coming soon...
