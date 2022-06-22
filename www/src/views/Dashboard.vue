@@ -308,8 +308,4 @@
     min-width: 240px;
     max-width: 440px;
   }
-
-  .my-padding-60 {
-    background: rgba(0, 0, 0, 0.6);
-  }
 </style>
