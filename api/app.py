@@ -2,7 +2,11 @@ from flask import Flask, request, json
 from flask_restful import Resource, Api
 from flask_cors import CORS
 from os import environ
-import models
+from datetime import datetime
+import bcrypt
+import uuid
+import api_models
+
 
 app = Flask(__name__)
 CORS(app)
@@ -28,10 +32,9 @@ def DoesRequestHaveAPIKey(key):
 
 
 def LoadData():
-    loaded_json_file = open("db.json", "rt")
-    wanted_data = json.load(loaded_json_file)
-    loaded_json_file.close()
-    return wanted_data
+    with open("db.json", "rt", encoding="utf-8") as file:
+        wanted_data = json.load(file)
+        return wanted_data
 
 
 def SaveData(data):
@@ -47,6 +50,34 @@ class Login(Resource):
         if DoesRequestHaveAPIKey(arrived_data["API_KEY"]):
             try:
                 return {"message": "Login successfull", "id": "0001"}, 201
+            except:
+                return {"error": "Something is wrong."}, 500
+        else:
+            return {"error": "API key is wrong."}, 500
+
+
+class Register(Resource):
+    def post(self):
+        arrived_data = request.get_json()
+        if DoesRequestHaveAPIKey(arrived_data["API_KEY"]):
+            try:
+                loaded_data = LoadData()
+                wanted_data = loaded_data["users"]
+                if len(wanted_data.keys()) >= 2:
+                    for i in wanted_data:
+                        user = wanted_data.get(i)
+                        if user["username"] == arrived_data["username"]:
+                            return {"error": "Username already exists."}, 500
+                else:
+                    index = wanted_data["index"]
+                    new_user = User(index, arrived_data["username"], uuid.uuid4(),
+                                    arrived_data["password"], datetime.utcnow())
+                    wanted_data.update({str(index): new_user.__dict__})
+                    index += 1
+                    wanted_data["index"] = index
+                    loaded_data["users"] = wanted_data
+                    SaveData(loaded_data)
+                    return {"message": "Register successfull", "uuid": new_user.uuid}, 201
             except:
                 return {"error": "Something is wrong."}, 500
         else:
@@ -142,6 +173,7 @@ def method_not_found(e):
 
 api.add_resource(Wiki, "/")
 api.add_resource(Login, "/login")
+api.add_resource(Register, "/register")
 api.add_resource(Todos, "/todos")
 api.add_resource(Index, "/index")
 

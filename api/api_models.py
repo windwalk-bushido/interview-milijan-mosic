@@ -1,11 +1,10 @@
 class User:
-    def __init__(self, index, username, uuid, password, salt, date_created):
+    def __init__(self, index, username, uuid, password, date_created):
         self.index = index
         self.username = username
-        self.uuid = uuid
+        self.uuid = str(uuid)
         self.password = password
-        self.salt = salt
-        self.date_created = date_created
+        self.date_created = str(date_created)
         self.date_modified = ""
 
 
@@ -15,5 +14,5 @@ class Todo:
         self.belongs_to = belongs_to
         self.body = body
         self.done = done
-        self.date_created = date_created
+        self.date_created = str(date_created)
         self.date_modified = ""
