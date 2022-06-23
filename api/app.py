@@ -1,6 +1,8 @@
 from flask import Flask, request, json
 from flask_restful import Resource, Api
 from flask_cors import CORS
+from os import environ
+import models
 
 app = Flask(__name__)
 CORS(app)
@@ -16,6 +18,25 @@ class Wiki(Resource):
         helper.update({"index": "Fetch index by heading to '/index'"})
         helper.update({"message": "Thanks!'"})
         return helper, 200
+
+
+def DoesRequestHaveAPIKey(key):
+    if(key == environ.get('API_KEY')):
+        return True
+    else:
+        return False
+
+
+class Login(Resource):
+    def post(self):
+        arrived_data = request.get_json()
+        if DoesRequestHaveAPIKey(arrived_data["API_KEY"]):
+            try:
+                return {"message": "Login successfull", "id": "0001"}, 201
+            except:
+                return {"error": "Something is wrong."}, 500
+        else:
+            return {"error": "API key is wrong."}, 500
 
 
 def LoadData():
@@ -103,6 +124,7 @@ def method_not_found(e):
 
 
 api.add_resource(Wiki, "/")
+api.add_resource(Login, "/login")
 api.add_resource(Todos, "/todos")
 api.add_resource(Index, "/index")
 
