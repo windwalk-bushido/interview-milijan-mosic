@@ -1,8 +1,10 @@
 <script setup lang="ts">
-  import { ref, onMounted } from "vue";
+  import { ref, onMounted, defineEmits } from "vue";
   import type { Ref } from "vue";
   import axios from "axios";
   import Todo from "../class";
+
+  const emit = defineEmits(["NavBarLoggedIn"]);
 
   const todo_list: Ref<Object | any> = ref([]);
   const temp_todo_item = ref("");
@@ -155,10 +157,13 @@
 
   onMounted(() => {
     FetchTodos();
+    emit("NavBarLoggedIn");
   });
 </script>
 
 <template>
+  <div class="mt-16"></div>
+
   <div class="flex justify-center w-full pt-1 pb-1 bg-green-600 text-white" v-if="edit_index === -1">
     <p class="text-lg">Ready for using</p>
   </div>
@@ -171,7 +176,7 @@
 
     <div class="flex justify-center items-center w-full mt-12">
       <input
-        class="p-2 rounded-tl-3xl rounded-bl-3xl text-xl input bg-gray-200"
+        class="p-2 rounded-tl-3xl rounded-bl-3xl text-xl input bg-white"
         type="text"
         placeholder="Buy 3 bottles of milk"
         v-model="temp_todo_item"
@@ -194,7 +199,7 @@
           class="p-4 mb-6 rounded-3xl"
           v-for="(todo, index) in todo_list"
           :key="index"
-          :class="todo.done ? 'bg-white' : 'shadow-xl bg-amber-100'"
+          :class="todo.done ? 'bg-gray-200' : 'shadow-xl bg-amber-100'"
         >
           <main class="w-full mb-4 break-words" :class="todo.done ? 'line-through' : 'no-underline'">
             <p>{{ todo.body }}</p>

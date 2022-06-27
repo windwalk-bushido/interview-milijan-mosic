@@ -59,12 +59,12 @@
     </nav>
   </header>
 
-  <main class="flex flex-col justify-start items-center bg-gray-200">
+  <main class="flex flex-col justify-start items-center w-screen h-screen bg-gray-200">
     <!-- <RouterView /> -->
     <RouterView class="mt-20 mb-10" @NavBarLoggedIn="NavBarLoggedIn" />
   </main>
 
-  <footer class="flex justify-between items-center p-4">
+  <footer class="bottom-0 flex justify-between items-center p-4">
     <div class="flex">
       <p class="mr-2">By:</p>
       <a

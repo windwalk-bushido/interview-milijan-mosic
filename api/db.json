@@ -2,9 +2,9 @@
   "todos": {
     "0": {
       "belongs_to": "5b6bcb78-9e1a-419f-850b-28d791c9fa09",
-      "body": "First todo",
+      "body": "First todo :)",
       "date_created": "2022-06-27 15:27:40.939887",
-      "date_modified": "",
+      "date_modified": "Mon, 27 Jun 2022 15:47:27 GMT",
       "done": false,
       "index": 0
     },
