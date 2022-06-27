@@ -60,8 +60,8 @@
   </header>
 
   <main class="flex flex-col justify-start items-center bg-gray-200">
-    <!-- <RouterView class="mt-20 mb-10" @NavBarLoggedIn="NavBarLoggedIn" /> -->
-    <RouterView />
+    <!-- <RouterView /> -->
+    <RouterView class="mt-20 mb-10" @NavBarLoggedIn="NavBarLoggedIn" />
   </main>
 
   <footer class="flex justify-between items-center p-4">

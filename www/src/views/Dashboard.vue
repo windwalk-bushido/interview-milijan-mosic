@@ -4,17 +4,32 @@
   import axios from "axios";
   import Todo from "../class";
 
-  const url = ref("http://localhost:5000");
   const todo_list: Ref<Object | any> = ref([]);
   const temp_todo_item = ref("");
-  const index = ref(-1);
   const edit_index = ref(-1);
   const delete_index = ref(-1);
   const disable_control = ref(false);
 
+  function GetUsersToken() {
+    const uuid_token_session = sessionStorage.getItem("todo_app_user_uuid");
+    const uuid_token_storage = localStorage.getItem("todo_app_user_uuid");
+
+    if (uuid_token_session !== null) {
+      return uuid_token_session;
+    } else {
+      return uuid_token_storage;
+    }
+  }
+
   async function FetchTodos() {
-    axios
-      .get(url.value + "/todos")
+    const token = GetUsersToken();
+
+    await axios
+      .post(import.meta.env.VITE_API_URL + "/todos", {
+        API_KEY: import.meta.env.VITE_API_KEY,
+        mode: "get",
+        uuid: token,
+      })
       .then((response) => {
         const arrived_data = response["data"];
         for (let i in arrived_data) {
@@ -24,42 +39,21 @@
       .catch((error) => {
         alert(error);
       });
-    axios
-      .get(url.value + "/index")
-      .then((response) => {
-        index.value = response["data"];
-      })
-      .catch((error) => {
-        alert(error);
-      });
   }
 
   async function AddTodo() {
+    const token = GetUsersToken();
+
     if (temp_todo_item.value !== "" && edit_index.value === -1) {
-      const todo = new Todo(index.value, temp_todo_item.value, false);
-      index.value++;
+      const todo = new Todo(token, temp_todo_item.value, false);
       todo_list.value.push(todo);
 
-      axios({
-        method: "put",
-        url: url.value + "/index",
-        data: {
-          index: index.value,
-        },
-      })
-        .then((response) => {
-          console.log(response["data"]);
+      await axios
+        .post(import.meta.env.VITE_API_URL + "/todos", {
+          API_KEY: import.meta.env.VITE_API_KEY,
+          mode: "post",
+          todo: todo,
         })
-        .catch((error) => {
-          alert(error);
-        });
-      axios({
-        method: "post",
-        url: url.value + "/todos",
-        data: {
-          todo,
-        },
-      })
         .then((response) => {
           console.log(response["data"]);
         })
@@ -73,18 +67,19 @@
       todo_list.value[edit_index.value].body = temp_todo_item.value;
 
       const todo = new Todo(
-        todo_list.value[edit_index.value].index,
+        token,
         todo_list.value[edit_index.value].body,
         todo_list.value[edit_index.value].done
       );
-      axios({
-        method: "put",
-        url: url.value + "/todos",
-        data: {
-          todo,
+
+      await axios
+        .put(import.meta.env.VITE_API_URL + "/todos", {
+          API_KEY: import.meta.env.VITE_API_KEY,
           mode: "put",
-        },
-      })
+          todo: todo,
+          index: todo_list.value[edit_index.value].index,
+          date_created: todo_list.value[edit_index.value].date_created,
+        })
         .then((response) => {
           console.log(response["data"]);
         })
@@ -102,20 +97,18 @@
 
   async function DoneTodo(index: number) {
     todo_list.value[index].done = !todo_list.value[index].done;
+    const token = GetUsersToken();
 
-    const todo = new Todo(
-      todo_list.value[index].index,
-      todo_list.value[index].body,
-      todo_list.value[index].done
-    );
-    axios({
-      method: "put",
-      url: url.value + "/todos",
-      data: {
-        todo,
+    const todo = new Todo(token, todo_list.value[index].body, todo_list.value[index].done);
+
+    await axios
+      .put(import.meta.env.VITE_API_URL + "/todos", {
+        API_KEY: import.meta.env.VITE_API_KEY,
         mode: "put",
-      },
-    })
+        todo: todo,
+        index: todo_list.value[index].index,
+        date_created: todo_list.value[index].date_created,
+      })
       .then((response) => {
         console.log(response["data"]);
       })
@@ -133,14 +126,13 @@
 
   async function DeleteTodo() {
     const number = todo_list.value[delete_index.value].index;
-    axios({
-      method: "put",
-      url: url.value + "/todos",
-      data: {
-        target: number,
+
+    await axios
+      .put(import.meta.env.VITE_API_URL + "/todos", {
+        API_KEY: import.meta.env.VITE_API_KEY,
         mode: "delete",
-      },
-    })
+        target: number,
+      })
       .then((response) => {
         console.log(response["data"]);
       })

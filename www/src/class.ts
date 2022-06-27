@@ -1,10 +1,10 @@
 class Todo {
-  index: number;
+  uuid: any;
   body: string;
   done: boolean;
 
-  constructor(index: number, body: string, done: boolean) {
-    this.index = index;
+  constructor(uuid: any, body: string, done: boolean) {
+    this.uuid = uuid;
     this.body = body;
     this.done = done;
   }

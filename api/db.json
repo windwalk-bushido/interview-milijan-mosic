@@ -1,6 +1,14 @@
 {
   "todos": {
-    "index": 0
+    "0": {
+      "belongs_to": "5b6bcb78-9e1a-419f-850b-28d791c9fa09",
+      "body": "First todo",
+      "date_created": "2022-06-27 15:27:40.939887",
+      "date_modified": "",
+      "done": false,
+      "index": 0
+    },
+    "index": 1
   },
   "users": {
     "0": {

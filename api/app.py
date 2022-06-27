@@ -17,8 +17,10 @@ class Wiki(Resource):
         helper = dict()
         helper.update(
             {"welcome": "Hello, you're at the root of the Flask app'"})
-        helper.update({"todos": "Fetch todos by heading to '/todos'"})
-        helper.update({"index": "Fetch index by heading to '/index'"})
+        helper.update(
+            {"source_code": "For the source code, visit link bellow'"})
+        helper.update(
+            {"link": "https://github.com/windwalk-bushido/interview-milijan-mosic"})
         helper.update({"message": "Thanks!'"})
         return helper, 200
 
@@ -93,7 +95,6 @@ class Register(Resource):
                     for i in wanted_data:
                         user = wanted_data.get(i)
                         if user["username"] == arrived_data["username"]:
-                            print("Username already exists.")
                             return {"error": "Username already exists."}, 500
                 index = wanted_data["index"]
                 hashed_password = pbkdf2_sha256.hash(
@@ -113,29 +114,38 @@ class Register(Resource):
 
 
 class Todos(Resource):
-    def get(self):
-        arrived_data = request.get_json()
-        if DoesRequestHaveAPIKey(arrived_data["API_KEY"]):
-            try:
-                loaded_data = LoadData()
-                loaded_data.pop("index")
-                return loaded_data, 200
-            except:
-                return {"error": "Unable to fetch todos"}, 500
-        else:
-            return {"error": "API key is wrong."}, 500
-
     def post(self):
         arrived_data = request.get_json()
         if DoesRequestHaveAPIKey(arrived_data["API_KEY"]):
-            try:
-                loaded_data = LoadData()
-                index = loaded_data["index"]
-                loaded_data.update({str(index): arrived_data["todo"]})
-                SaveData(loaded_data)
-                return {"message": "Todo created successfully"}, 201
-            except:
-                return {"error": "Todo not created"}, 500
+            loaded_data = LoadData()
+            wanted_data = loaded_data["todos"]
+            if arrived_data["mode"] == "get":
+                try:
+                    loaded_data = LoadData()
+                    wanted_data = loaded_data["todos"]
+                    wanted_data.pop("index")
+                    todos = []
+                    for i in wanted_data:
+                        todo = wanted_data.get(i)
+                        if arrived_data["uuid"] == todo["belongs_to"]:
+                            todos.append(todo)
+                    return todos, 200
+                except:
+                    return {"error": "Unable to fetch todos"}, 500
+            if arrived_data["mode"] == "post":
+                try:
+                    index = wanted_data["index"]
+                    todo = arrived_data["todo"]
+                    new_todo = Todo(index, todo["uuid"],
+                                    todo["body"], todo["done"], datetime.utcnow())
+                    wanted_data.update({str(index): new_todo.__dict__})
+                    index += 1
+                    wanted_data["index"] = index
+                    loaded_data["todos"] = wanted_data
+                    SaveData(loaded_data)
+                    return {"message": "Todo created successfully"}, 201
+                except:
+                    return {"error": "Todo not created"}, 500
         else:
             return {"error": "API key is wrong."}, 500
 
@@ -143,12 +153,17 @@ class Todos(Resource):
         arrived_data = request.get_json()
         if DoesRequestHaveAPIKey(arrived_data["API_KEY"]):
             loaded_data = LoadData()
+            wanted_data = loaded_data["todos"]
             if arrived_data["mode"] == "put":
                 try:
-                    for i in loaded_data:
-                        todo = loaded_data.get(i)
-                        if todo["index"] == arrived_data["todo"]["index"]:
-                            loaded_data.update({str(i): arrived_data["todo"]})
+                    for i in wanted_data:
+                        todo = wanted_data.get(i)
+                        if todo["index"] == int(arrived_data["index"]):
+                            new_todo = Todo(
+                                arrived_data["index"], arrived_data["todo"]["uuid"], arrived_data["todo"]["body"], arrived_data["todo"]["done"], arrived_data["date_created"])
+                            new_todo.date_modified = datetime.utcnow()
+                            wanted_data.update({str(i): new_todo.__dict__})
+                            loaded_data["todos"] = wanted_data
                             SaveData(loaded_data)
                             return {"message": "Todo updated successfully"}, 200
                 except:
@@ -156,40 +171,15 @@ class Todos(Resource):
             if arrived_data["mode"] == "delete":
                 try:
                     index_for_deletion = arrived_data["target"]
-                    for i in loaded_data:
-                        todo = loaded_data.get(i)
+                    for i in wanted_data:
+                        todo = wanted_data.get(i)
                         if todo["index"] == int(index_for_deletion):
-                            loaded_data.pop(str(i))
+                            wanted_data.pop(str(i))
+                            loaded_data["todos"] = wanted_data
                             SaveData(loaded_data)
                             return {"message": "Todo deleted successfully"}, 200
                 except:
                     return {"error": "Todo not deleted"}, 500
-        else:
-            return {"error": "API key is wrong."}, 500
-
-
-class Index(Resource):
-    def get(self):
-        arrived_data = request.get_json()
-        if DoesRequestHaveAPIKey(arrived_data["API_KEY"]):
-            try:
-                loaded_data = LoadData()
-                return loaded_data["index"], 200
-            except:
-                return {"error": "Unable to fetch index"}, 500
-        else:
-            return {"error": "API key is wrong."}, 500
-
-    def put(self):
-        arrived_data = request.get_json()
-        if DoesRequestHaveAPIKey(arrived_data["API_KEY"]):
-            try:
-                loaded_data = LoadData()
-                loaded_data["index"] = arrived_data["index"]
-                SaveData(loaded_data)
-                return {"message": "Index updated successfully"}, 200
-            except:
-                return {"error": "Unable to fetch index"}, 500
         else:
             return {"error": "API key is wrong."}, 500
 
@@ -200,10 +190,9 @@ def method_not_found(e):
 
 
 api.add_resource(Wiki, "/")
-api.add_resource(Login, "/login")
 api.add_resource(Register, "/register")
+api.add_resource(Login, "/login")
 api.add_resource(Todos, "/todos")
-api.add_resource(Index, "/index")
 
 
 if __name__ == "__main__":
