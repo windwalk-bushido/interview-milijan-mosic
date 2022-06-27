@@ -174,7 +174,7 @@
     <p class="text-lg">App in editing mode!</p>
   </div>
 
-  <main class="app flex flex-col justify-center w-full mt-4">
+  <div class="app flex flex-col justify-center w-full mt-4">
     <h1 class="mt-2 text-center text-4xl">Todo App</h1>
 
     <div class="flex justify-center items-center w-full mt-12">
@@ -267,7 +267,7 @@
         </article>
       </div>
     </div>
-  </main>
+  </div>
 
   <div
     class="w-screen h-screen justify-center items-center z-10 absolute my-padding-60"

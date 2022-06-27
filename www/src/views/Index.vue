@@ -1,6 +1,5 @@
 <script setup lang="ts">
   import { ref, defineEmits } from "vue";
-
   import { RouterLink, useRouter } from "vue-router";
   import axios from "axios";
 
@@ -20,7 +19,7 @@
   let login_password_error = ref("");
 
   let is_data_being_sent = ref(false);
-  let is_modal_raised = ref(true);
+  let is_modal_raised = ref(false);
 
   function HandleModal(command: boolean) {
     is_modal_raised.value = command;
@@ -109,29 +108,28 @@
       const register_username_input = document.getElementById("register_username_input") as HTMLFormElement;
       const register_password1_input = document.getElementById("register_password1_input") as HTMLFormElement;
 
-      let hashed_password = "";
-      // HASH PASSWORD HERE
+      let user: any = undefined;
+      let reg_error: any = undefined;
 
-      const { user, error } = await axios
-        .get(import.meta.env.VITE_API_URL + "/register", {
-          data: {
-            username: register_username_input.value,
-            password: hashed_password,
-          },
+      await axios
+        .post(import.meta.env.VITE_API_URL + "/register", {
+          API_KEY: import.meta.env.VITE_API_KEY,
+          username: register_username_input.value,
+          password: register_password1_input.value,
         })
         .then((response) => {
-          return response["data"];
+          console.log(response.data);
+          user = response.data;
         })
         .catch((error) => {
-          return error;
+          reg_error = error.response.data;
+          console.log(error.request.response["error"]);
         });
 
-      if (user !== null && error === null) {
+      if (user !== null && reg_error === null) {
         HandleModal(true);
       } else {
-        if (error !== null) {
-          alert(error);
-        }
+        alert(reg_error);
       }
     }
 
@@ -182,31 +180,31 @@
       const login_username_input = document.getElementById("login_username_input") as HTMLFormElement;
       const login_password_input = document.getElementById("login_password_input") as HTMLFormElement;
 
-      let hashed_password = "";
-      // HASH PASSWORD HERE
+      let user: any = undefined;
+      let error: any = undefined;
 
-      const { user, error } = await axios
-        .get(import.meta.env.VITE_API_URL + "/login", {
-          data: {
-            username: login_username_input.value,
-            password: hashed_password,
-          },
+      await axios
+        .post(import.meta.env.VITE_API_URL + "/login", {
+          API_KEY: import.meta.env.VITE_API_KEY,
+          username: login_username_input.value,
+          password: login_password_input.value,
         })
         .then((response) => {
-          return response["data"];
+          console.log(response.data);
+          user = response.data;
         })
         .catch((error) => {
-          return error;
+          error = error.response.data;
         });
 
-      if (user !== null && error === null) {
+      if (user !== null) {
         // kul = Keep User Logged in
         const kul_checkbox = document.getElementById("kul_checkbox") as HTMLFormElement;
 
         if (kul_checkbox.checked) {
-          localStorage.setItem("todo_app_user_uuid", user.id);
+          localStorage.setItem("todo_app_user_uuid", user["uuid"]);
         } else {
-          sessionStorage.setItem("todo_app_user_uuid", user.id);
+          sessionStorage.setItem("todo_app_user_uuid", user["uuid"]);
         }
 
         emit("NavBarLoggedIn");
@@ -217,9 +215,7 @@
         is_login_password_good.value = false;
         login_password_error.value = "Username or password is not correct.";
 
-        if (error !== null) {
-          console.log(error);
-        }
+        console.log(error);
       }
     }
 

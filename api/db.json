@@ -4,12 +4,12 @@
   },
   "users": {
     "0": {
-      "date_created": "2022-06-23 23:12:30.906078",
+      "date_created": "2022-06-27 12:46:37.573273",
       "date_modified": "",
       "index": 0,
-      "password": "$2a$10$U78o4dfJkjTHxAiYqfqq3eJO/fjJYrgUzYuDwleSP.HDd0yXYFm86",
+      "password": "$pbkdf2-sha256$29000$LUXofe9dq9XaO2esFeJ87w$MxDB7mr.TWPUAce6KrzegiQ6HuRiHWwTXDvstIUunrA",
       "username": "windwalk",
-      "uuid": "9c9ad0c7-11d1-43f5-b42d-e70180a4cd61"
+      "uuid": "5b6bcb78-9e1a-419f-850b-28d791c9fa09"
     },
     "index": 1
   }

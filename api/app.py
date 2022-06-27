@@ -1,11 +1,10 @@
 from flask import Flask, request, json
 from flask_restful import Resource, Api
 from flask_cors import CORS
-from os import environ
+from os import environ, urandom
 from datetime import datetime
-import bcrypt
+from passlib.hash import pbkdf2_sha256
 import uuid
-import api_models
 
 
 app = Flask(__name__)
@@ -22,6 +21,26 @@ class Wiki(Resource):
         helper.update({"index": "Fetch index by heading to '/index'"})
         helper.update({"message": "Thanks!'"})
         return helper, 200
+
+
+class User:
+    def __init__(self, index, username, uuid, password, date_created):
+        self.index = index
+        self.username = username
+        self.uuid = str(uuid)
+        self.password = password
+        self.date_created = str(date_created)
+        self.date_modified = ""
+
+
+class Todo:
+    def __init__(self, index, belongs_to, body, done, date_created):
+        self.index = index
+        self.belongs_to = belongs_to
+        self.body = body
+        self.done = done
+        self.date_created = str(date_created)
+        self.date_modified = ""
 
 
 def DoesRequestHaveAPIKey(key):
@@ -49,9 +68,16 @@ class Login(Resource):
         arrived_data = request.get_json()
         if DoesRequestHaveAPIKey(arrived_data["API_KEY"]):
             try:
-                return {"message": "Login successfull", "id": "0001"}, 201
+                loaded_data = LoadData()
+                wanted_data = loaded_data["users"]
+                for i in wanted_data:
+                    user = wanted_data.get(i)
+                    if user["username"] == arrived_data["username"]:
+                        if pbkdf2_sha256.verify(
+                                arrived_data["password"], user["password"]):
+                            return {"message": "Login successfull", "uuid": user["uuid"]}, 200
             except:
-                return {"error": "Something is wrong."}, 500
+                return {"error": "Credentials are wrong."}, 500
         else:
             return {"error": "API key is wrong."}, 500
 
@@ -67,17 +93,19 @@ class Register(Resource):
                     for i in wanted_data:
                         user = wanted_data.get(i)
                         if user["username"] == arrived_data["username"]:
+                            print("Username already exists.")
                             return {"error": "Username already exists."}, 500
-                else:
-                    index = wanted_data["index"]
-                    new_user = User(index, arrived_data["username"], uuid.uuid4(),
-                                    arrived_data["password"], datetime.utcnow())
-                    wanted_data.update({str(index): new_user.__dict__})
-                    index += 1
-                    wanted_data["index"] = index
-                    loaded_data["users"] = wanted_data
-                    SaveData(loaded_data)
-                    return {"message": "Register successfull", "uuid": new_user.uuid}, 201
+                index = wanted_data["index"]
+                hashed_password = pbkdf2_sha256.hash(
+                    arrived_data["password"])
+                new_user = User(index, arrived_data["username"], uuid.uuid4(
+                ), hashed_password, datetime.utcnow())
+                wanted_data.update({str(index): new_user.__dict__})
+                index += 1
+                wanted_data["index"] = index
+                loaded_data["users"] = wanted_data
+                SaveData(loaded_data)
+                return {"message": "Register successfull", "uuid": new_user.uuid}, 201
             except:
                 return {"error": "Something is wrong."}, 500
         else:
